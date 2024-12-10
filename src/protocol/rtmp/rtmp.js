@@ -1,104 +1,98 @@
-// @ts-check
-//
-//  Created by Chen Mingliang on 24/11/30.
-//  illuspas@msn.com
-//  Copyright (c) 2024 Nodemedia. All rights reserved.
-//
 
-const AMF = require("./amf.js");
-const Flv = require("./flv.js");
-const crypto = require("node:crypto");
-const logger = require("../core/logger.js");
-const AVPacket = require("../core/avpacket.js");
+var AMF = require("../amf/amf.js");
+var Flv = require("./flv.js");
+var crypto = require("node:crypto");
+var logger = require("../core/logger.js");
+var AVPacket = require("../../core/avpacket.js");
 
-const N_CHUNK_STREAM = 8;
-const RTMP_VERSION = 3;
-const RTMP_HANDSHAKE_SIZE = 1536;
-const RTMP_HANDSHAKE_UNINIT = 0;
-const RTMP_HANDSHAKE_0 = 1;
-const RTMP_HANDSHAKE_1 = 2;
-const RTMP_HANDSHAKE_2 = 3;
+var N_CHUNK_STREAM = 8;
+var RTMP_VERSION = 3;
+var RTMP_HANDSHAKE_SIZE = 1536;
+var RTMP_HANDSHAKE_UNINIT = 0;
+var RTMP_HANDSHAKE_0 = 1;
+var RTMP_HANDSHAKE_1 = 2;
+var RTMP_HANDSHAKE_2 = 3;
 
-const RTMP_PARSE_INIT = 0;
-const RTMP_PARSE_BASIC_HEADER = 1;
-const RTMP_PARSE_MESSAGE_HEADER = 2;
-const RTMP_PARSE_EXTENDED_TIMESTAMP = 3;
-const RTMP_PARSE_PAYLOAD = 4;
+var RTMP_PARSE_INIT = 0;
+var RTMP_PARSE_BASIC_HEADER = 1;
+var RTMP_PARSE_MESSAGE_HEADER = 2;
+var RTMP_PARSE_EXTENDED_TIMESTAMP = 3;
+var RTMP_PARSE_PAYLOAD = 4;
 
-const MAX_CHUNK_HEADER = 18;
+var MAX_CHUNK_HEADER = 18;
 
-const RTMP_CHUNK_TYPE_0 = 0; // 11-bytes: timestamp(3) + length(3) + stream type(1) + stream id(4)
-const RTMP_CHUNK_TYPE_1 = 1; // 7-bytes: delta(3) + length(3) + stream type(1)
-const RTMP_CHUNK_TYPE_2 = 2; // 3-bytes: delta(3)
-const RTMP_CHUNK_TYPE_3 = 3; // 0-byte
+var RTMP_CHUNK_TYPE_0 = 0; // 11-bytes: timestamp(3) + length(3) + stream type(1) + stream id(4)
+var RTMP_CHUNK_TYPE_1 = 1; // 7-bytes: delta(3) + length(3) + stream type(1)
+var RTMP_CHUNK_TYPE_2 = 2; // 3-bytes: delta(3)
+var RTMP_CHUNK_TYPE_3 = 3; // 0-byte
 
-const RTMP_CHANNEL_PROTOCOL = 2;
-const RTMP_CHANNEL_INVOKE = 3;
-const RTMP_CHANNEL_AUDIO = 4;
-const RTMP_CHANNEL_VIDEO = 5;
-const RTMP_CHANNEL_DATA = 6;
+var RTMP_CHANNEL_PROTOCOL = 2;
+var RTMP_CHANNEL_INVOKE = 3;
+var RTMP_CHANNEL_AUDIO = 4;
+var RTMP_CHANNEL_VIDEO = 5;
+var RTMP_CHANNEL_DATA = 6;
 
-const rtmpHeaderSize = [11, 7, 3, 0];
+var rtmpHeaderSize = [11, 7, 3, 0];
 
 /* Protocol Control Messages */
-const RTMP_TYPE_SET_CHUNK_SIZE = 1;
-const RTMP_TYPE_ABORT = 2;
-const RTMP_TYPE_ACKNOWLEDGEMENT = 3; // bytes read report
-const RTMP_TYPE_WINDOW_ACKNOWLEDGEMENT_SIZE = 5; // server bandwidth
-const RTMP_TYPE_SET_PEER_BANDWIDTH = 6; // client bandwidth
+var RTMP_TYPE_SET_CHUNK_SIZE = 1;
+var RTMP_TYPE_ABORT = 2;
+var RTMP_TYPE_ACKNOWLEDGEMENT = 3; // bytes read report
+var RTMP_TYPE_WINDOW_ACKNOWLEDGEMENT_SIZE = 5; // server bandwidth
+var RTMP_TYPE_SET_PEER_BANDWIDTH = 6; // client bandwidth
 
 /* User Control Messages Event (4) */
-const RTMP_TYPE_EVENT = 4;
+var RTMP_TYPE_EVENT = 4;
 
 
-const RTMP_TYPE_AUDIO = 8;
-const RTMP_TYPE_VIDEO = 9;
+var RTMP_TYPE_AUDIO = 8;
+var RTMP_TYPE_VIDEO = 9;
 
 /* Data Message */
-const RTMP_TYPE_FLEX_STREAM = 15; // AMF3
-const RTMP_TYPE_DATA = 18; // AMF0
+var RTMP_TYPE_FLEX_STREAM = 15; // AMF3
+var RTMP_TYPE_DATA = 18; // AMF0
 
 /* Shared Object Message */
-const RTMP_TYPE_FLEX_OBJECT = 16; // AMF3
-const RTMP_TYPE_SHARED_OBJECT = 19; // AMF0
+var RTMP_TYPE_FLEX_OBJECT = 16; // AMF3
+var RTMP_TYPE_SHARED_OBJECT = 19; // AMF0
 
 /* Command Message */
-const RTMP_TYPE_FLEX_MESSAGE = 17; // AMF3
-const RTMP_TYPE_INVOKE = 20; // AMF0
+var RTMP_TYPE_FLEX_MESSAGE = 17; // AMF3
+var RTMP_TYPE_INVOKE = 20; // AMF0
 
 /* Aggregate Message */
-const RTMP_TYPE_METADATA = 22;
+var RTMP_TYPE_METADATA = 22;
 
-const RTMP_CHUNK_SIZE = 128;
-const RTMP_MAX_CHUNK_SIZE = 0xffff;
-const RTMP_PING_TIME = 60000;
-const RTMP_PING_TIMEOUT = 30000;
+var RTMP_CHUNK_SIZE = 128;
+var RTMP_MAX_CHUNK_SIZE = 0xffff;
+var RTMP_PING_TIME = 60000;
+var RTMP_PING_TIMEOUT = 30000;
 
-const STREAM_BEGIN = 0x00;
-const STREAM_EOF = 0x01;
-const STREAM_DRY = 0x02;
-const STREAM_EMPTY = 0x1f;
-const STREAM_READY = 0x20;
+var STREAM_BEGIN = 0x00;
+var STREAM_EOF = 0x01;
+var STREAM_DRY = 0x02;
+var STREAM_EMPTY = 0x1f;
+var STREAM_READY = 0x20;
 
-const MESSAGE_FORMAT_0 = 0;
-const MESSAGE_FORMAT_1 = 1;
-const MESSAGE_FORMAT_2 = 2;
+var MESSAGE_FORMAT_0 = 0;
+var MESSAGE_FORMAT_1 = 1;
+var MESSAGE_FORMAT_2 = 2;
 
-const RTMP_SIG_SIZE = 1536;
-const SHA256DL = 32;
+var RTMP_SIG_SIZE = 1536;
+var SHA256DL = 32;
 
-const RandomCrud = Buffer.from([
+var RandomCrud = Buffer.from([
   0xf0, 0xee, 0xc2, 0x4a, 0x80, 0x68, 0xbe, 0xe8,
   0x2e, 0x00, 0xd0, 0xd1, 0x02, 0x9e, 0x7e, 0x57,
   0x6e, 0xec, 0x5d, 0x2d, 0x29, 0x80, 0x6f, 0xab,
   0x93, 0xb8, 0xe6, 0x36, 0xcf, 0xeb, 0x31, 0xae
 ]);
 
-const GenuineFMSConst = "Genuine Adobe Flash Media Server 001";
-const GenuineFMSConstCrud = Buffer.concat([Buffer.from(GenuineFMSConst, "utf8"), RandomCrud]);
+var GenuineFMSConst = "Genuine Adobe Flash Media Server 001";
+var GenuineFMSConstCrud = Buffer.concat([Buffer.from(GenuineFMSConst, "utf8"), RandomCrud]);
 
-const GenuineFPConst = "Genuine Adobe Flash Player 001";
-const GenuineFPConstCrud = Buffer.concat([Buffer.from(GenuineFPConst, "utf8"), RandomCrud]);
+var GenuineFPConst = "Genuine Adobe Flash Player 001";
+var GenuineFPConstCrud = Buffer.concat([Buffer.from(GenuineFPConst, "utf8"), RandomCrud]);
 
 /**
  *
@@ -262,9 +256,7 @@ class Rtmp {
    * @param {string} streamName
    * @abstract
    */
-  onConnectCallback = (streamApp, streamName) => {
-
-  };
+  onConnectCallback = null
 
   /**
    * @abstract
@@ -715,7 +707,7 @@ class Rtmp {
     this.streamName = invokeMessage.streamName.split("?")[0];
     this.streamId = this.parserPacket.header.stream_id;
     this.respondPublish();
-    this.onConnectCallback(this.streamApp, this.streamName);
+    this.onConnectCallback(this.streamApp, this.streamName, "");
     this.onPushCallback();
   };
 
@@ -724,7 +716,7 @@ class Rtmp {
     this.streamPath = "/" + this.streamApp + "/" + this.streamName;
     this.streamId = this.parserPacket.header.stream_id;
     this.respondPlay();
-    this.onConnectCallback(this.streamApp, this.streamName);
+    this.onConnectCallback(this.streamApp, this.streamName, "");
     this.onPlayCallback();
   };
 

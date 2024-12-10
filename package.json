@@ -1,5 +1,5 @@
 {
-  "name": "node-media-server",
+  "name": "node-rtmp-server",
   "description": "A Node.js implementation of RTMP Server",
   "version": "4.0.7",
   "bin": "bin/app.js",
@@ -15,9 +15,12 @@
     "livestream",
     "server"
   ],
-  "author": "Chen Mingliang",
-  "homepage": "https://github.com/illuspas/Node-Media-Server",
+  "author": "dencelman1",
+  "homepage": "https://github.com/dencelman1/node_rtmp_server",
   "license": "Apache-2.0",
+  "imports": {
+    "#index": "./src/index.js"
+  },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "eslint": "^9.15.0",

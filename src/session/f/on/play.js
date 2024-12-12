@@ -1,11 +1,19 @@
 
 
 export default (
-    function() {
-        return(
-            (this.isPublisher = false),
-            this.broadcast.postPlay(this),
-            this
+    (t) => {
+        var
+            c = (
+                (f) => (
+                    f(t)
+                )
+            ),
+            e = t.s.ee
+        ;
+        return () => (
+            e.emit(6, c),
+            (t.isPublisher = false)
         )
     }
+    
 )

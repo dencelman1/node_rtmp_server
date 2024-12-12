@@ -1,14 +1,18 @@
 
 
 export default (
-    function() {
-        return (
-            (this.isPublisher = true),
-            (
-                (this.broadcast.postPush(this) === null) ||
-                this.socket.end()
+    (t) => {
+        var
+            c = (
+                (f) => (
+                    f(t)
+                )
             ),
-            this
-        );
+            e = t.s.ee
+        ;
+        return () => (
+            e.emit(7, c),
+            (t.isPublisher = true)
+        )
     }
 )

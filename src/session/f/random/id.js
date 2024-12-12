@@ -8,11 +8,11 @@ export default (
             i = 0
         ;
         while (true) {
-            i = step;
+            i = this.step;
             while (i--) {
                 if (
                     (
-                        id += this.alphabet[p.random(this.step)[i] & this.mask] || ""
+                        id += this.alphabet[this.random(this.step)[i] & this.mask] || ""
                     )
                     .length >= (
                         size

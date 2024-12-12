@@ -1,25 +1,27 @@
 {
-  "name": "node-rtmp-server",
+  "name": "rtmp_server",
   "description": "A Node.js implementation of RTMP Server",
   "version": "4.0.7",
   "bin": "bin/app.js",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "dev": "npx eslint;node bin/app.js",
     "start": "node bin/app.js"
   },
   "keywords": [
     "rtmp",
-    "flv",
-    "rtmp",
     "livestream",
-    "server"
+    "server",
+    "live"
   ],
   "author": "dencelman1",
-  "homepage": "https://github.com/dencelman1/node_rtmp_server",
-  "license": "Apache-2.0",
+  "homepage": "https://github.com/dencelman1/rtmp_server",
+  "license": "MIT",
   "imports": {
-    "#index": "./src/index.js"
+    "#index": "./src/index.js",
+    "#core": "./src/core/index.js",
+    "#protocol": "./src/protocol/index.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

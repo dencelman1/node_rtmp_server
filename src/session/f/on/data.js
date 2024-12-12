@@ -1,16 +1,27 @@
 
-
 export default (
-    (d) => {
-        var e = null;
-        return (
-            (e = this.rtmp.parserData(d))
-            &&
-            (
-                console.error(e),
-                this.socket.end()
+    (t) => {
+        var
+            c = (
+                (d) => (f) => (
+                    f(t, d)
+                )
             ),
-            this
-        );
+            e = t.s.ee
+        ;
+        return (d) => {
+            var E = null;
+            return (
+                e.emit(2, c(d)),
+
+                (E = t.parserData(d))
+                &&
+                (
+                    console.error(E),
+                    t.sc.end()
+                ),
+                t
+            );
+        }
     }
 )

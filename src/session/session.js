@@ -1,49 +1,84 @@
-import {Rtmp, BroadcastServer} from "#index";
 import * as f from './f/index.js';
 
 
-function Session(ctx, socket) {
-    this.id = this.randomId();
-    this.ip = "";
-    this.protocol = "";
-    this.streamHost = "";
-    this.streamApp = "";
-    this.streamName = "";
-    this.streamPath = "";
+function Session(sc) {
+  this.sc = sc;
+  
+  this.id = this.randomId();
+  
+  this.a =
+  this.n =
+  this.p = "";
+  this.ip = sc.remoteAddress + ":" + sc.remotePort;
 
-    this.videoCodec = 0;
-    this.videoWidth = 0;
-    this.videoHeight = 0;
-    this.videoFramerate = 0;
-    this.videoDatarate = 0;
-    this.audioCodec = 0;
-    this.audioChannels = 0;
-    this.audioSamplerate = 0;
-    this.audioDatarate = 0;
-    
-    this.ctx = ctx;
-    this.socket = socket;
-    this.ip = socket.remoteAddress + ":" + socket.remotePort;
-    this.protocol = "rtmp";
-    this.rtmp = new Rtmp();
-    this.broadcast = new BroadcastServer();
+  this.handshakePayload = Buffer.alloc(this.RTMP_HANDSHAKE_SIZE);
+  this.handshakeState = this.RTMP_HANDSHAKE_UNINIT;
+  this.handshakeBytes = 0;
+
+  this.parserBuffer = Buffer.alloc(this.MAX_CHUNK_HEADER);
+  this.parserState = this.RTMP_PARSE_INIT;
+  this.parserBytes = 0;
+  this.parserBasicBytes = 0;
+  this.parserPacket = new this.RtmpPacket();
+  this.inPackets = new Map();
+
+  this.inChunkSize = this.RTMP_CHUNK_SIZE;
+  this.streams = 0;
+
+  Object.keys(this.AmfWithSideEffect)
+  .reduce(
+    this.AmfWithSideEffectReduce,
+    this
+  );
+
+  Object.keys(this.on)
+  .reduce(
+      this.onReduce,
+      this
+  );
 };
-Object.assign(Session.prototype, f);
 
-Session.prototype.step = Math.ceil((1.6 * (
-  Session.prototype.mask = (
-    (2 << (31 - Math.clz32(((
-      Session.prototype.alphabet = "1234567890abcdefghijklmnopqrstuvwxyz"    
-    ).length - 1) | 1))) - 1
-  )  
-) * (
-  Session.prototype.defaultSize = 16
-)) / (
-  Session.prototype.alphabet.length
-));
+export default ((p, S, alphabet) => (
+  (p.onReduce = (
+    (t, k) => (
+      (t[k] = t.on[k](t)),
+      t
+    )
+  )),
+  (
+    p.step = (
+      Math.ceil(
+        (
+          1.6 *
+          (
+            p.mask = (
+              (2 << (31 - Math.clz32(((
+                p.alphabet = alphabet
+              ).length - 1) | 1))) - 1
+            )  
+          ) * (
+            p.defaultSize = 16
+          )
+        )
+        /
+        ( alphabet.length )
+      )
+    )
+  ),
 
-Session.pool = null;
-Session.poolOffset = 0;
-Session.prototype.POOL_SIZE_MULTIPLIER = 128;
+  (
+    p.s =
+    S.pool = (
+      null
+    )
+  ),
 
-export default Session;
+  (S.poolOffset = 0),
+  (p.POOL_SIZE_MULTIPLIER = 128),
+
+  S
+))(
+  Object.assign(Session.prototype, f),
+  Session,
+  "1234567890abcdefghijklmnopqrstuvwxyz",
+);

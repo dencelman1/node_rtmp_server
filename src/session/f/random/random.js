@@ -2,8 +2,12 @@
 
 export default (
     function(bs) {
+        var f = 0, c = null;
         return (
-            this.pool.subarray(this.fillPool((bs |= 0)) - bs, poolOffset)
+            (f = (
+                this.fillPool((bs |= 0))
+            )),
+            ((c = this.constructor).pool).subarray(f - bs, c.poolOffset)
         );
     }
 )

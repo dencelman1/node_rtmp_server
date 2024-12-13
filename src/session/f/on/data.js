@@ -9,19 +9,10 @@ export default (
             ),
             e = t.s.ee
         ;
-        return (d) => {
-            var E = null;
-            return (
-                e.emit(2, c(d)),
-
-                (E = t.parserData(d))
-                &&
-                (
-                    console.error(E),
-                    t.sc.end()
-                ),
-                t
-            );
-        }
+        return (d) => (
+            e.emit(2, c(d)),
+            t.parserData(d),
+            t
+        );
     }
 )

@@ -3,27 +3,29 @@
 export default (
     function(p) {
         var
-            rtmpPacket = new this.RtmpPacket(),
-            header = null,
-            dts = p.dts
+          rp = new this.RtmpPacket(),
+          dts = p.dts,
+          ct = p.codec_type
         ;
-        rtmpPacket.header.fmt = this.MESSAGE_FORMAT_0;
-        switch (p.codec_type) {
-        case 8:
-          rtmpPacket.header.cid = this.RTMP_CHANNEL_AUDIO;
-          break;
-        case 9:
-          rtmpPacket.header.cid = this.RTMP_CHANNEL_VIDEO;
-          break;
-        case 18:
-          rtmpPacket.header.cid = this.RTMP_CHANNEL_DATA;
-          break;
-        }
-        (header = rtmpPacket.header).length = p.size;
-        header.type = p.codec_type;
-        header.timestamp = dts;
-        rtmpPacket.clock = dts;
-        rtmpPacket.payload = p.data;
-        return this.chunksCreate(rtmpPacket);
+        
+        rp.cid = (
+          ct === 8
+          ? 4
+          :
+          ct === 9
+          ? 5
+          :
+          ct === 18
+          ? 6
+          : rp.cid
+        );
+        
+        rp.fmt = 0;
+        rp.length = p.size;
+        rp.type = p.codec_type;
+        rp.timestamp = dts;
+        rp.clock = dts;
+        rp.payload = p.data;
+        return this.chunksCreate(rp);
     }
 )

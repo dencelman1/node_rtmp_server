@@ -1,40 +1,68 @@
 
 
 export default (
-    function(csig) {
+    function(sg) {
         var
             sdl = 0,
             SHA256DL = 0,
-            GenuineFPConst = null
+            GenuineFPConst = ""
         ;
         return (
             this.calcHmac(
-                (
-                    Buffer.concat([csig.substring(0, (
-                        sdl = this.GetServerGenuineConstDigestOffset(csig.substring(772, 776))            
-                    )), csig.substring(sdl + (SHA256DL = this.SHA256DL))], 1504)
+                Buffer.concat(
+                    [
+                        sg.slice(
+                            0,
+                            (
+                                sdl =
+                                    this
+                                    .GetServerGenuineConstDigestOffset(
+                                        sg.slice(772, 776)
+                                    )
+                            )
+                        ),
+                        sg.slice(sdl + (SHA256DL = this.SHA256DL))
+                    ],
+                    1504
                 ),
                 (GenuineFPConst = this.GenuineFPConst)
             )
-            .equals(csig.substring(sdl, sdl + SHA256DL))
-            ? this.MESSAGE_FORMAT_2
+            .equals(
+                sg.slice(
+                    sdl,
+                    sdl + SHA256DL
+                )
+            )
+            ? 2
             :
 
             this.calcHmac(
-                (
-
-                    Buffer.concat([csig.substring(0, (
-                        sdl = this.GetClientGenuineConstDigestOffset(csig.substring(8, 12))
-                    )), csig.substring(sdl + SHA256DL)], 1504)
-
+                Buffer.concat(
+                    [
+                        sg.slice(
+                            0,
+                            (
+                                sdl =
+                                    this
+                                    .GetClientGenuineConstDigestOffset(
+                                        sg.slice(8, 12)
+                                    )
+                            )
+                        ),
+                        sg.slice(sdl + SHA256DL)
+                    ],
+                    1504
                 ),
                 GenuineFPConst
             )
             .equals(
-                csig.substring(sdl, sdl + SHA256DL)
+                sg.slice(
+                    sdl,
+                    sdl + SHA256DL
+                )
             )
-            ? this.MESSAGE_FORMAT_1
-            : this.MESSAGE_FORMAT_0
+            ? 1
+            : 0
         );
     }
 )

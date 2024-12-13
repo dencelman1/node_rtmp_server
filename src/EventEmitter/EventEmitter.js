@@ -1,7 +1,8 @@
 
 
-function EventEmitter() {
+function EventEmitter( all ) {
     this.v = new Map();
+    this.a = all;
 };
 
 EventEmitter.prototype.off = (
@@ -44,7 +45,17 @@ EventEmitter.prototype.emit = (
         return (
             (this.v)
             .get(n)
-            ?.forEach(cb)
+            ?.forEach(cb),
+
+            (this.a)
+            &&
+            (
+                (this.v)
+                .get(8)
+                .forEach((f) => f(this, n))
+            ),
+
+            0
         );
     }
 )

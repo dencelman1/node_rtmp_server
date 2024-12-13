@@ -1,29 +1,32 @@
 
 
 export default (
-    function() {
-        var
-            pp = this.parserPacket,
-            h = pp.header,
-            m = this.decodeAmf0Cmd(
-                pp.payload.subarray(
-                    (h.type === this.RTMP_TYPE_FLEX_MESSAGE ? 1 : 0),
-                    h.length
+    (
+        t, // this
+        pp,
+        m, // null
+        c // ""
+    ) => (
+        t[
+            "onim"
+            +
+            (
+                c = (
+                    (
+                        m = t.decodeAmf0Cmd(
+                            pp.payload.subarray(
+                                (pp.type === 17 ? 1 : 0),
+                                pp.length
+                            )
+                        )
+                    )
+                    .cmd
                 )
-            ),
-            c = m.cmd
-        ;
-        return (
-
-            this[
-                "onIm" +
-                c[o].toUpperCase() +
-                c.substring(1)
-            ](
-                m
-            ),
-
-            this
-        );
-    }
+            )[o]
+            +
+            c.substring(1)
+        ](
+            m
+        )
+    )
 )

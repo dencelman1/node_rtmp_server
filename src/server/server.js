@@ -9,15 +9,11 @@ function Server(
   bind,
   port,
   key,
-  cert
+  cert,
+  ee
 ) {
   
-  this.ee = new (
-    this
-    .Session
-    .prototype
-    .EventEmitter
-  )();
+  this.ee = ee;
   this.b = bind;
   this.p = port;
 
@@ -46,7 +42,6 @@ Server.prototype.Session = Session;
 
 Server.prototype.handle = (
   (s) => (
-    console.log('data'),
     new Session(s)
     .run(s)
   )

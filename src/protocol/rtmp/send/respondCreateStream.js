@@ -6,7 +6,7 @@ export default (
           cmd: "_result",
           transId,
           cmdObj: null,
-          info: this.streams++
+          info: this.ss++
         });
     }
 )

@@ -5,36 +5,43 @@ function Session(sc) {
   this.sc = sc;
   
   this.id = this.randomId();
+  this.sid = (
+    (
+      this.pp = new this.RtmpPacket() // parser_packet
+    )
+    .stream_id
+  );
+  
+  this.inp = new Map(); // inPackets
   
   this.a =
   this.n =
   this.p = "";
   this.ip = sc.remoteAddress + ":" + sc.remotePort;
 
-  this.handshakePayload = Buffer.alloc(this.RTMP_HANDSHAKE_SIZE);
-  this.handshakeState = this.RTMP_HANDSHAKE_UNINIT;
-  this.handshakeBytes = 0;
+  this.hs = 0; // handshakestate
+  this.ps = 0; // parserState
+  this.ics = this.RTMP_CHUNK_SIZE; // inChunkSize
+  this.ackSize = 0;
 
-  this.parserBuffer = Buffer.alloc(this.MAX_CHUNK_HEADER);
-  this.parserState = this.RTMP_PARSE_INIT;
-  this.parserBytes = 0;
-  this.parserBasicBytes = 0;
-  this.parserPacket = new this.RtmpPacket();
-  this.inPackets = new Map();
+  this.pb = // parserBytes
+  this.pbb = // parserBasicBytes
+  this.ss = // streams
+  this.hb = 0; // handshakeBytes
 
-  this.inChunkSize = this.RTMP_CHUNK_SIZE;
-  this.streams = 0;
-
-  Object.keys(this.AmfWithSideEffect)
-  .reduce(
-    this.AmfWithSideEffectReduce,
-    this
-  );
-
+  this.hp = Buffer.alloc(this.RTMP_HANDSHAKE_SIZE); // handshakePayload
+  this.bf = Buffer.alloc(this.MAX_CHUNK_HEADER); // parserBuffer
+  
   Object.keys(this.on)
   .reduce(
-      this.onReduce,
-      this
+    this.onReduce,
+    (
+      Object.keys(this.AmfWithSideEffect)
+      .reduce(
+        this.AmfWithSideEffectReduce,
+        this
+      )
+    )
   );
 };
 

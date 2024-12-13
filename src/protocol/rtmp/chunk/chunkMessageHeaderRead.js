@@ -1,28 +1,33 @@
 
 
 export default (
-    function() {
-        var
-            offset = this.parserBasicBytes,
-            header = null,
-            pb = this.parserBuffer
-        ;
+  (
+    o, // offset // this.pbb
+    pp,
+    fmt, // pp.fmt
+    bf // this.bf
+  ) => (
+    (fmt <= 2)
+    &&
+    (
+      (pp.timestamp = bf.readUIntBE(o, 3)),
+      (o += 3)
+    ),
 
-        if ((header = this.parserPacket.header).fmt <= this.RTMP_CHUNK_TYPE_2) {
-          header.timestamp = pb.readUIntBE(offset, 3);
-          offset += 3;
-        }
-        
-        if (this.parserPacket.header.fmt <= this.RTMP_CHUNK_TYPE_1) {
-          header.length = pb.readUIntBE(offset, 3);
-          header.type = pb[offset + 3];
-          offset += 4;
-        }
-    
-        if (this.parserPacket.header.fmt === this.RTMP_CHUNK_TYPE_0) {
-          header.stream_id = pb.readUInt32LE(offset);
-          offset += 4;
-        }
-        return offset;
-    }
+    (fmt <= 1) &&
+    (
+      (pp.length = bf.readUIntBE(o, 3)),
+      (pp.type = bf[o + 3]),
+      (o += 4)
+    ),
+
+    (fmt === 0)
+    &&
+    (
+      (pp.stream_id = bf.readUInt32LE(o)),
+      (o += 4)
+    ),
+
+    o
+  )
 )

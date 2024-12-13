@@ -1,15 +1,13 @@
 
 
 export default (
-    function(opt) {
-        var
-            d = null,
-            b = this.amfXEncodeOne(opt.cmd)
-        ;
-        return (
-          (d = this.rtmpCmdCode[opt.cmd])
-          ? d.reduce( this.reduce(opt), b )
-          : b
-        );
-    }
+    (
+        reduce, // this.reduce
+        d, // this.rtmpCmdCode[opt.cmd]
+        b // this.amfXEncodeOne(opt.cmd)
+    ) => (
+        d
+        ? d.reduce( reduce(opt), b )
+        : b
+    )
 )

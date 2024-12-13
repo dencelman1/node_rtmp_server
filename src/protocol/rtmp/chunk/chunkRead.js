@@ -1,114 +1,217 @@
 
 
 export default (
-    function(data, p, bytes) {
+  function(data, p, bytes) {
+    var
+      _ = this,
+      size = 0,
+      offset = 0,
+      extended_timestamp = 0,
+      
+      rtmpHeaderSize = _.rtmpHeaderSize,
+
+      ps = null,
+      bf = null,
+      pb = null,
+      pbb = null,
+      ics = null,
+      pp = null,
+
+      isWhite = false,
+
+      l = 0,
+      pbytes = 0,
+      timestamp = 0,
+
+      set = (_, to) => {
         var
-            size = 0,
-            offset = 0,
-            extended_timestamp = 0,
-            parserBuffer = this.parserBuffer,
-            rtmpHeaderSize = this.rtmpHeaderSize
+          bf = _.bf,
+          pb = _.pb
         ;
-    
-        while (offset < bytes) {
-          switch (this.parserState) {
-          case this.RTMP_PARSE_INIT:
-            this.parserBytes = 1;
-            parserBuffer[0] = data[p + offset++];
-            this.parserBasicBytes = (
-                (0 === (parserBuffer[0] & 0x3f))
-                ? 2
-                :
-                (1 === (parserBuffer[0] & 0x3f))
-                ? 3
-                : 1
-            );
-            this.parserState = this.RTMP_PARSE_BASIC_HEADER;
-            break;
-          case this.RTMP_PARSE_BASIC_HEADER:
-            while (this.parserBytes < this.parserBasicBytes && offset < bytes) {
-              parserBuffer[this.parserBytes++] = data[p + offset++];
-            }
-            if (this.parserBytes >= this.parserBasicBytes) {
-              this.parserState = this.RTMP_PARSE_MESSAGE_HEADER;
-            }
-            break;
-          case this.RTMP_PARSE_MESSAGE_HEADER:
-            size = rtmpHeaderSize[parserBuffer[0] >> 6] + this.parserBasicBytes;
-            while (this.parserBytes < size && offset < bytes) {
-              parserBuffer[this.parserBytes++] = data[p + offset++];
-            }
-            if (this.parserBytes >= size) {
-              this.packetParse();
-              this.parserState = this.RTMP_PARSE_EXTENDED_TIMESTAMP;
-            }
-            break;
-          case this.RTMP_PARSE_EXTENDED_TIMESTAMP:
-            size = rtmpHeaderSize[this.parserPacket.header.fmt] + this.parserBasicBytes;
-            if (this.parserPacket.header.timestamp === 0xffffff) {
-              size += 4;
-            }
-            while (this.parserBytes < size && offset < bytes) {
-              parserBuffer[this.parserBytes++] = data[p + offset++];
-            }
-            if (this.parserBytes >= size) {
-              if (this.parserPacket.header.timestamp === 0xffffff) {
-                extended_timestamp = (
-                    parserBuffer.readUInt32BE(
-                        rtmpHeaderSize[this.parserPacket.header.fmt] +
-                        this.parserBasicBytes
-                    )
-                );
-              } else {
-                extended_timestamp = this.parserPacket.header.timestamp;
-              }
-    
-              if (this.parserPacket.bytes === 0) {
-                this.parserPacket.clock = (
-                    extended_timestamp
-                    +
-                    (
-                        (this.RTMP_CHUNK_TYPE_0 === this.parserPacket.header.fmt)
-                        ? 0
-                        : this.parserPacket.clock
-                    )
-                );
-                this.packetAlloc();
-              }
-              this.parserState = this.RTMP_PARSE_PAYLOAD;
-            }
-            break;
-          case this.RTMP_PARSE_PAYLOAD:
-            size = Math.min(
-                this.inChunkSize -
+        while ((pb < to) && (offset < bytes)) {
+          bf[pb++] = data[p + offset++];
+        };
+        _.pb = pb;
+        return to;
+      },
+
+      f = 0
+    ;
+
+    while (offset < bytes) {
+      (ps = _.ps),
+      console.log("ps = "+ps),
+
+      (ics = _.ics),
+      (pb = _.pb),
+      (pbb = _.pbb),
+      (bf = _.bf),
+      (pp = _.pp),
+
+      (ps === 0)
+      ? (
+        (_.pb = 1),
+        (
+          _.pbb = (
+            (0 === ((f = data[p + offset++]) & 0x3f))
+            ? 2
+            :
+            (1 === (f & 0x3f))
+            ? 3
+            : 1
+          )
+        ),
+
+        (_.ps = 1),
+        (bf[0] = f)
+      )
+      :
+      (ps === 1)
+      ? (
+        (pb >= set(_, pbb))
+        &&
+        ( _.ps = 2 )
+      )
+      :
+      (ps === 2)
+      ? (
+        (
+          pb >= (
+            size = (
+              set(
+                _,
+                rtmpHeaderSize[bf[0] >> 6] + pbb
+              )
+            )
+          )
+        )
+        &&
+        (
+          _.pbb = (
+            this.chunkMessageHeaderRead(
+              pbb,
+              (
+                pp = _.pp = (
+                  this.packetParse(
+                    pbb,
+                    bf,
+                    this.inp,
+                    bf[0] >> 6,
+                    this.RtmpPacket,
+                    0,
+                    null
+                  )
+                )
+              ),
+              pp.fmt, // pp.fmt
+              bf // this.bf
+            )
+          ),
+
+          (_.ps = 3)
+        )
+      )
+      :
+      (ps === 3)
+      ? (
+        (pb >= (
+          size = set(
+            _,
+            (
+              (rtmpHeaderSize[pp.fmt] + pbb)
+              +
+              (
+                ( isWhite = ( (timestamp = pp.timestamp) === 0xffffff ) )
+                ? 4
+                : 0
+              )
+            )
+          )
+        ))
+        &&
+        (
+          (extended_timestamp = (
+            isWhite
+            ? (
+              bf
+              .readUInt32BE(
+                rtmpHeaderSize[pp.fmt] +
+                pbb
+              )
+            )
+            : timestamp
+          )),
+
+          (pbytes === 0)
+          && (
+            (pp.clock = (
+                extended_timestamp
+                +
                 (
-                    this.parserPacket.bytes % this.inChunkSize
+                  (0 === pp.fmt)
+                  ? 0
+                  : pp.clock
+                )
+            )),
+            
+            this.packetAlloc( pp, pp.length )
+          ),
+          (_.ps = 4)
+        )
+      )
+      :
+      (ps === 4)
+      && (
+        
+        ((
+          size = Math.min(
+            (
+              (size = Math.min(
+                ics -
+                (
+                  (pbytes = pp.bytes) % ics
                 ),
                 (
-                    this.parserPacket.header.length -
-                    this.parserPacket.bytes
+                  (l = pp.length) -
+                  pbytes
                 )
-            );
-            size = Math.min(size, bytes - offset);
-            if (size > 0) {
-              data.copy(this.parserPacket.payload, this.parserPacket.bytes, p + offset, p + offset + size);
-            }
-            this.parserPacket.bytes += size;
-            offset += size;
-    
-            if (this.parserPacket.bytes >= this.parserPacket.header.length) {
-              this.parserState = this.RTMP_PARSE_INIT;
-              this.parserPacket.bytes = 0;
-              if (this.parserPacket.clock > 0xffffffff) {
-                break;
-              }
-              this.packetHandler();
-            } else if (0 === this.parserPacket.bytes % this.inChunkSize) {
-              this.parserState = this.RTMP_PARSE_INIT;
-            }
-            break;
-          }
-        }
-        return null;
-    }
+              ))
+            ),
+            bytes - offset
+          )
+        ) > 0)
+        &&
+        (
+          data.copy(
+            pp.payload,
+            pbytes,
+            p + offset,
+            p + offset + size
+          )
+        ),
+        (offset += size),
+
+        ((pbytes = (pp.bytes += size)) >= l)
+        ? (
+          (
+            _.ps =
+            pp.bytes =
+              0
+          ),
+
+          (pp.clock > 0xffffffff)
+          ||
+          this.packetHandler(this, pp, pp.type)
+        )
+        :
+        (0 === pbytes % ics)
+        &&
+        (
+          _.ps = 0
+        )
+      )
+    };
+
+    return 0;
+  }
 )

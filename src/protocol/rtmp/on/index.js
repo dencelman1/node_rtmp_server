@@ -1,6 +1,6 @@
 // im - invokeMessage;
 
-export {default as onImPlay} from './play.js';
-export {default as onImConnect} from './connect.js';
-export {default as onImPublish} from './publish.js';
-export {default as onImCreateStream} from './createStream.js';
+export {default as onimplay} from './play.js';
+export {default as onimconnect} from './connect.js';
+export {default as onimpublish} from './publish.js';
+export {default as onimcreateStream} from './createStream.js';

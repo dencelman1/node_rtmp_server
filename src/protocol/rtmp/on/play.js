@@ -21,8 +21,10 @@ export default (
                     )
                 )
             ),
-            (this.streamId = this.parserPacket.header.stream_id),
-            this.respondPlay(),
+            this.respondPlay(
+                this,
+                (this.sid = this.pp.stream_id)
+            ),
             this.onConnect(sa, sn, ""),
             this.onPlay(),
             this

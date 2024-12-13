@@ -1,17 +1,17 @@
 
 
 export default (
-    function() {
-        var pp = null,
-            h = null;
-        
-        return this.onPacket(
-            this.flvParserTag(
-                (h = (pp = this.parserPacket).header).type,
-                pp.clock,
-                h.length,
-                pp.payload
+    (
+        t, // this
+        p // pp
+    ) => (
+        t.onPacket(
+            t.flvParserTag(
+                p.type,
+                p.clock,
+                p.length,
+                p.payload
             )
-        );
-    }
+        )
+    )
 )

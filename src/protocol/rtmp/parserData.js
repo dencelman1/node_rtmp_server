@@ -56,6 +56,7 @@ export default (
             (_.hb = 0),
             _.onOutput(
               _.generateS0S1S2(
+                _,
                 hp,
                 _.detectClientMessageFormat(hp)
               )

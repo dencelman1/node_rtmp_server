@@ -1,14 +1,14 @@
 
 
 export default (
-    function(messageFormat, clientsig) {
+    (_, mf, sg) => {
         var
-            RTMP_SIG_SIZE = this.RTMP_SIG_SIZE,
+            RTMP_SIG_SIZE = _.RTMP_SIG_SIZE,
             randomBytes = crypto.randomBytes(RTMP_SIG_SIZE - 32),
             challengeKeyOffset = (
-                (messageFormat === 1)
-                ? this.GetClientGenuineConstDigestOffset(clientsig.slice(8, 12))
-                : this.GetServerGenuineConstDigestOffset(clientsig.slice(772, 776))
+                (mf === 1)
+                ? _.GetClientGenuineConstDigestOffset(sg.slice(8, 12))
+                : _.GetServerGenuineConstDigestOffset(sg.slice(772, 776))
             )
         ;
         
@@ -16,12 +16,12 @@ export default (
             [
                 randomBytes,
                 (
-                    this.calcHmac(
+                    _.calcHmac(
                         randomBytes,
                         (
-                            this.calcHmac(
-                                clientsig.slice(challengeKeyOffset, challengeKeyOffset + 32),
-                                this.GenuineFMSConstCrud
+                            _.calcHmac(
+                                sg.slice(challengeKeyOffset, challengeKeyOffset + 32),
+                                _.GenuineFMSConstCrud
                             )
                         )
                     )

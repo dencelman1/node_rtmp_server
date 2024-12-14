@@ -14,7 +14,11 @@ export default (
                 c = (
                     (
                         m = t.decodeAmf0Cmd(
-                            pp.payload.subarray(
+                            t,
+
+                            pp
+                            .payload
+                            .subarray(
                                 (pp.type === 17 ? 1 : 0),
                                 pp.length
                             )
@@ -26,6 +30,7 @@ export default (
             +
             c.substring(1)
         ](
+            t,
             m
         )
     )

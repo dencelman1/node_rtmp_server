@@ -40,18 +40,15 @@ export default ((
       value = {},
       iBuf = b.slice(1),
       sLen = 0,
-      prop = null,
+      prop = {
+        len: 2 + (sLen = iBuf.readUInt16BE(0)),
+        value: iBuf.toString("utf8", 2, 2 + sLen)
+      },
       val = null
     ;
     
     while (iBuf.readUInt8(0) != 0x09) {
-      l += (
-        prop = {
-          len: 2 + (sLen = iBuf.readUInt16BE(0)),
-          value: iBuf.toString("utf8", 2, 2 + sLen)
-        }
-      )
-      .len;
+      l += prop.len;
 
       if (iBuf.length < prop.len) break;
       
@@ -84,7 +81,7 @@ export default ((
       i = 0
     ;
     for (; length; length--) {
-      a[i++] = (ret = t.amfXDecodeOne(o, b.slice(len))).value;
+      a[i++] = (ret = t.amfXDecodeOne(b.slice(len))).value;
       len += ret.len;
     }
     return {

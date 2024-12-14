@@ -1,42 +1,49 @@
 
 
 export default (
-    function(b) {
+    (reduce) => (_, b) => {
         var
-            b = b,
             resp = {},
-            cmd = this.amfXDecodeOne(b),
+            cmd = _.amfXDecodeOne(b),
             d = null,
             v = cmd.value
         ;
         return (
-            (d = this.rtmpCmdCode[resp.cmd = v])
+            (d = _.rtmpCmdCode[resp.cmd = v])
             &&
             (
                 d
                 .reduce(
-                    (b, n) => {
-                        var r = null;
-                        return (
-                            (b.length)
-                            ? (
-                                (
-                                    resp[n] = (
-                                        (
-                                            r = this.amfXDecodeOne(b)
-                                        )
-                                        .value
-                                    )
-                                ),
-                                b.slice( r.len )
-                            )
-                            : b
-                        )
-                    },
+                    reduce(_, resp),
                     b.slice(cmd.len)
                 )
             ),
             resp
         );
     }
+)(
+    (_, resp) => (
+        (b, n) => {
+            var r = null;
+            return (
+                (b.length > 0)
+                && (
+                   
+                    (
+                        b =
+                            b.slice(
+                                (
+                                    r = _.amfXDecodeOne(b)
+                                )
+                                .len
+                            )
+                    ),
+                    (
+                        resp[n] = r.value
+                    )
+                ),
+                b
+            )
+        }
+    )
 )

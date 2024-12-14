@@ -1,35 +1,38 @@
 
 
 export default (
-    function(o) {
-        var
-            termCode = null,
-            data = null
-        ;
-        return (
-            typeof o === "object"
+    (
+        dataConcat
+    ) => (
+        (_, o) => (
+            ( typeof o === "object" )
             ? (
-                (data = Buffer.alloc(1))
-                .writeUInt8(0x03, 0),
-                
-                (termCode = Buffer.alloc(1))
-                .writeUInt8(0x09, 0),
-
-                Buffer.concat([
-                    (
-                        o.reduce(
-                            (data, k, _, o) => (
-                                Buffer.concat([data, this.amf0encUString(k), this.amfXEncodeOne(this, o[k])])
-                            ),
-                            data
-                        )
-                    ),
-                    this.amf0encUString(""),
-                    termCode
-                ])
+                Buffer.concat(
+                    dataConcat(
+                        _,
+                        Buffer.alloc(1),
+                        Buffer.alloc(1),
+                        "",
+                        o
+                    )
+                )
 
             )
             : null
         )
+    )
+)(
+    (_, d, tc, k, o) => {
+        d.writeUInt8(0x03, 0);
+        tc.writeUInt8(0x09, 0);
+
+        for (k in o) {
+            d = Buffer.concat([d, _.amf0encUString(k), _.amfXEncodeOne(o[k])]);
+        };
+        return [
+            d,
+            _.amf0encUString(""),
+            tc
+        ];
     }
-)
+);

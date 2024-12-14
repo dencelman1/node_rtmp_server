@@ -1,7 +1,7 @@
 
 
 export default (
-    (o) => (opt) => (d, n) => (
+    (_) => (opt) => (d, n) => (
         (
             (
                 (
@@ -12,7 +12,7 @@ export default (
             )
             .call(opt, n)
         )
-        ? Buffer.concat([d, o.amfXEncodeOne(opt[n])])
+        ? Buffer.concat([d, _.amfXEncodeOne(opt[n])])
         : d
     )
 )

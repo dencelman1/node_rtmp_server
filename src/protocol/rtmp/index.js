@@ -3,7 +3,6 @@ export * from './chunk/index.js';
 export * from './generate/index.js';
 export * from './on/index.js';
 export * from './send/index.js';
-export * from './set/index.js';
 
 export {default as detectClientMessageFormat} from './detectClientMessageFormat.js';
 export {default as flvParserTag} from './flvParserTag.js';

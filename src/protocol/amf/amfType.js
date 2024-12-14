@@ -5,25 +5,21 @@ export default (o) => {
         (o === null)
         ? "null"
         :
-        ((t = typeof o) == "number")
+        ((t = typeof o) === "number")
         ? (
-            (parseInt(o) == o)
+            (parseInt(o) === o)
             ? "integer"
             : "double"
         )
         :
-        (t == "boolean")
+        (t === "boolean")
         ? o.toString()
         :
-        (t == "object")
+        ((t === "object") && (o instanceof Array))
         ? (
-            (o instanceof Array)
-            ? (
-              (o.sarray)
-              ? "sarray"
-              : "array"
-            )
-            : "object"
+            (o.sarray)
+            ? "sarray"
+            : "array"
         )
         : t
     );

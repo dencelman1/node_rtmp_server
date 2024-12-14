@@ -7,7 +7,7 @@ function Session(sc) {
   this.id = this.randomId();
   this.sid = (
     (
-      this.pp = new this.RtmpPacket() // parser_packet
+      this.pp = new this.RtmpPacket(0, 0) // parser_packet
     )
     .stream_id
   );

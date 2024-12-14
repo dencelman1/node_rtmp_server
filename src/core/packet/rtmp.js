@@ -1,13 +1,12 @@
 
 
-
 export default (
     function (
-        fmt,
-        cid
+        f,
+        c
     ) {
-        this.fmt = fmt || 0;
-        this.cid = cid || 0;
+        this.fmt = f;
+        this.cid = c;
         
         this.payload = Buffer.alloc(
             this.timestamp =

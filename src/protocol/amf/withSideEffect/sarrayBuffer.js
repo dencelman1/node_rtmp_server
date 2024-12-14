@@ -1,9 +1,9 @@
 
 
 export default (
-    (o) => (
+    (_) => (
         (b, v) => (
-            Buffer.concat([b, o.amfXEncodeOne(v)])
+            Buffer.concat([b, _.amfXEncodeOne(v)])
         )
     )
 )

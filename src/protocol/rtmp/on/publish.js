@@ -1,17 +1,23 @@
 
 
 export default (
-    function(invokeMessage) {
+    (_, im) => {
         var sn = "";
         return (
-            (typeof (sn = invokeMessage.streamName) === "string")
+            (typeof (sn = im.streamName) === "string")
             &&
             (
-                (sn = this.n = sn.split("?")[0]),
-                (this.sid = this.pp.stream_id),
-                this.respondPublish(),
-                this.onConnect(this.a, sn, ""),
-                this.onPush()
+                (sn = _.n = sn.split("?")[0]),
+                (
+                    _.sendStatusMessage(
+                        (_.sid = _.pp.stream_id),
+                        "status",
+                        "NetStream.Publish.Start",
+                        ("[ PUBLISHED ]: " + _.p)
+                    )
+                ),
+                _.onConnect(_.a, sn, ""),
+                _.onPush()
             )
         );        
     }

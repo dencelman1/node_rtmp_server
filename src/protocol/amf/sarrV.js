@@ -1,5 +1,5 @@
 
 
-export default (
-    { value: true }
-)
+export default ({
+    value: true
+});

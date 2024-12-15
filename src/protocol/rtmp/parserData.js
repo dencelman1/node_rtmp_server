@@ -1,18 +1,15 @@
 
 
 export default (
-    function(buffer) {
+    (_, buffer) => {
       var
-        _ = this,
         bytes = buffer.length,
         p = 0,
         n = 0,
         hs = 0,
 
         hb = null,
-        hp = null,
-        
-        RTMP_HANDSHAKE_SIZE = _.RTMP_HANDSHAKE_SIZE
+        hp = null
       ;
       
       while (bytes > 0) {
@@ -37,7 +34,7 @@ export default (
               n =
                 (
                   (n = (
-                    RTMP_HANDSHAKE_SIZE -
+                    1536 -
                     hb
                   ))
                   <= bytes
@@ -49,7 +46,7 @@ export default (
           (bytes -= n),
           (p += n),
           (
-            (_.hb += n) === RTMP_HANDSHAKE_SIZE
+            (_.hb += n) === 1536
           )
           && (
             (_.hs = 2),
@@ -69,7 +66,7 @@ export default (
           buffer.copy( hp, hb, p, (
             n = (
               (
-                (n = RTMP_HANDSHAKE_SIZE - hb)
+                (n = 1536 - hb)
                 <= bytes
               )
               ? n
@@ -79,7 +76,7 @@ export default (
           (bytes -= n),
           (p += n),
 
-          ((_.hb += n) === RTMP_HANDSHAKE_SIZE)
+          ((_.hb += n) === 1536)
           &&
           (
             (_.hs = 3),
@@ -88,7 +85,31 @@ export default (
 
         )
         : (
-          bytes = _.chunkRead(buffer, p, bytes)
+          bytes = _.chunkRead(
+            _,
+            buffer,
+            p,
+            bytes,
+            
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+
+            _.rtmpHeaderSize,
+
+            null,
+            null,
+            null,
+            null,
+            null,
+
+            false
+          )
         )
       };
 

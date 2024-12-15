@@ -1,47 +1,47 @@
 
 
 export default (
-  function(data, p, bytes) {
+  (
+    _,
+    data,
+    p,
+    bytes,
+
+    size, // 0
+    offset, // 0
+    extended_timestamp, // 0
+    l, // 0
+    pbytes, // 0
+    timestamp, // 0
+    f, // 0
+    pb, // 0
+
+    rtmpHeaderSize, // _.rtmpHeaderSize
+
+    ps, // null
+    bf, // null
+    
+    pbb, // null
+    ics, // null
+    pp, // null
+    isWhite, // false
+
+  ) => {
     var
-      _ = this,
-      size = 0,
-      offset = 0,
-      extended_timestamp = 0,
-      
-      rtmpHeaderSize = _.rtmpHeaderSize,
-
-      ps = null,
-      bf = null,
-      pb = null,
-      pbb = null,
-      ics = null,
-      pp = null,
-
-      isWhite = false,
-
-      l = 0,
-      pbytes = 0,
-      timestamp = 0,
-
-      set = (_, to) => {
-        var
-          bf = _.bf,
-          pb = _.pb
-        ;
-        while ((pb < to) && (offset < bytes)) {
-          bf[pb++] = data[p + offset++];
-        };
-        _.pb = pb;
-        return to;
-      },
-
-      f = 0
+      set = (
+        ( _, to ) => {
+          while ((pb < to) && (offset < bytes)) {
+            bf[pb++] = data[p + (offset++)];
+          };
+          _.pb = pb;
+          return to;
+        }
+      )
     ;
-
+    
     while (offset < bytes) {
       (ps = _.ps),
-      console.log("ps = "+ps),
-
+      
       (ics = _.ics),
       (pb = _.pb),
       (pbb = _.pbb),
@@ -87,26 +87,28 @@ export default (
         )
         &&
         (
-          _.pbb = (
-            this.chunkMessageHeaderRead(
+          (_.pbb = (
+            _.chunkMessageHeaderRead(
               pbb,
               (
-                pp = _.pp = (
-                  this.packetParse(
-                    pbb,
-                    bf,
-                    this.inp,
-                    bf[0] >> 6,
-                    this.RtmpPacket,
-                    0,
-                    null
+                pp = (
+                  _.pp = (
+                    _.packetParse(
+                      pbb,
+                      bf,
+                      _.inp,
+                      bf[0] >> 6,
+                      _.RtmpPacket,
+                      0,
+                      null
+                    )
                   )
                 )
               ),
-              pp.fmt, // pp.fmt
-              bf // this.bf
+              pp.fmt,
+              bf
             )
-          ),
+          )),
 
           (_.ps = 3)
         )
@@ -154,7 +156,7 @@ export default (
                 )
             )),
             
-            this.packetAlloc( pp, pp.length )
+            _.packetAlloc( pp, pp.length )
           ),
           (_.ps = 4)
         )
@@ -201,7 +203,7 @@ export default (
 
           (pp.clock > 0xffffffff)
           ||
-          this.packetHandler(this, pp, pp.type)
+          _.packetHandler(_, pp, pp.type)
         )
         :
         (0 === pbytes % ics)

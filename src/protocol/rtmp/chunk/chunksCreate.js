@@ -3,18 +3,28 @@
 export default (
     function(p) {
       var
-        pl = p.payload,
-        pls = p.length, // payloadSize
         cs = 0xffff, // chunkSize
         co = 0, // chunkOffset
         po = 0, // payloadOffset
-        cbh = this.chunkBasicHeaderCreate(p.fmt, p.cid), // cbh
-        cbh3 = this.chunkBasicHeaderCreate(3, p.cid), // chunkBasicHeader_3
+
+        pl = p.payload,
+        pls = p.length, // payloadSize
+        cid = p.cid,
+        fmt = p.fmt,
+        ts = p.timestamp,
+
+        cbh = this.chunkBasicHeaderCreate(fmt, cid, null), // cbh
+        cbh3 = this.chunkBasicHeaderCreate(3, cid, null), // chunkBasicHeader_3
+        
         cmh = this.chunkMessageHeaderCreate(
-          Buffer.alloc(this.rtmpHeaderSize[p.fmt % 4]),
-          p
-        ), // chunkMessage_Header
-        uet = p.timestamp >= 0xffffff, // use_ExtendedTimestamp
+          Buffer.alloc(this.rtmpHeaderSize[fmt % 4]),
+          p,
+          fmt,
+          ts
+        ),
+        // chunkMessage_Header
+        
+        uet = ts >= 0xffffff, // use_ExtendedTimestamp
         
         chs = (
           Buffer.alloc(
@@ -46,7 +56,7 @@ export default (
       co += cmh.length;
 
       (uet) && (
-        chs.writeUInt32BE(p.timestamp, co),
+        chs.writeUInt32BE(ts, co),
         (co += 4)
       );
 
@@ -58,10 +68,11 @@ export default (
           (co += cs),
           (po += cs),
           cbh3.copy(chs, co),
-          (co += cbh3.length_)
+          (co += cbh3.length_),
+          
           (uet)
           && (
-            chs.writeUInt32BE(p.timestamp, co),
+            chs.writeUInt32BE(ts, co),
             (co += 4)
           )
         )

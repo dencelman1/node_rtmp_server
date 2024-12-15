@@ -11,7 +11,7 @@ export default (
         ;
         return (d) => (
             e.emit(2, c(d)),
-            t.parserData(d),
+            t.parserData(t, d),
             t
         );
     }

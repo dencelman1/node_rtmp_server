@@ -18,19 +18,19 @@ function Session(sc) {
   this.n =
   this.p = "";
   this.ip = sc.remoteAddress + ":" + sc.remotePort;
+  
+  this.ics = 128; // inChunkSize
 
-  this.hs = 0; // handshakestate
-  this.ps = 0; // parserState
-  this.ics = this.RTMP_CHUNK_SIZE; // inChunkSize
-  this.ackSize = 0;
-
+  this.ackSize =
+  this.hs = // handshakestate
+  this.ps = // parserState
   this.pb = // parserBytes
   this.pbb = // parserBasicBytes
   this.ss = // streams
   this.hb = 0; // handshakeBytes
 
-  this.hp = Buffer.alloc(this.RTMP_HANDSHAKE_SIZE); // handshakePayload
-  this.bf = Buffer.alloc(this.MAX_CHUNK_HEADER); // parserBuffer
+  this.hp = Buffer.alloc(1536); // handshakePayload
+  this.bf = Buffer.alloc(18); // parserBuffer
   
   Object.keys(this.on)
   .reduce(
@@ -81,8 +81,7 @@ export default ((p, S, alphabet) => (
   ),
 
   (S.poolOffset = 0),
-  (p.POOL_SIZE_MULTIPLIER = 128),
-
+  
   S
 ))(
   Object.assign(Session.prototype, f),

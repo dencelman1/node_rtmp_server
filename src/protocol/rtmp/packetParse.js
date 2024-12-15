@@ -1,5 +1,4 @@
 
-
 export default (
     (
         pbb,
@@ -17,11 +16,11 @@ export default (
                     inp.get(
                         cid = (
                             (pbb === 2)
-                            ? 64 + bf[1]
+                            ? (64 + bf[1])
                             :
                             (pbb === 3)
-                            ? (64 + bf[1] + bf[2]) << 8
-                            : bf[0] & 0x3f
+                            ? ((64 + bf[1] + bf[2]) << 8)
+                            : (bf[0] & 0x3f)
                         )
                     )
                     ?? new RtmpPacket(fmt, cid)

@@ -31,7 +31,7 @@ export default (
         
         _.onOutput(ack(
             _,
-            _.RTMP_MAX_CHUNK_SIZE,
+            0xffff, // _.RTMP_MAX_CHUNK_SIZE
             Buffer.from("02000000000004010000000000000000", "hex")
         ));
 

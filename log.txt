@@ -3378,3 +3378,17 @@ ps = 3
 ps = 3
 
 ps = 4
+
+[ RTMP ]: runned 0.0.0.0:1935
+
+DATA 0
+
+OUTPUT 1
+
+DATA 2
+
+DATA 3
+
+DATA 4
+
+packetH = 1

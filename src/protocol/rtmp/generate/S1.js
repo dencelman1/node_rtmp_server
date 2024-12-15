@@ -6,25 +6,36 @@ export default (
         mf // messageFormat
     ) => {
         var
-            RTMP_SIG_SIZE = _.RTMP_SIG_SIZE,
-            rb = randomBytes(RTMP_SIG_SIZE - 8),
-            hb = Buffer.concat([Buffer.from([0, 0, 0, 0, 1, 2, 3, 4]), rb], RTMP_SIG_SIZE),
-            serverDigestOffset = (
+            hb = Buffer.concat(
+                [
+                    Buffer.from([0, 0, 0, 0, 1, 2, 3, 4]),
+                    randomBytes(1528)
+                    
+                ],
+                1536
+            ),
+
+            // server_Digest_Offset
+            sdo = (
                 (mf === 1)
                 ? _.GetClientGenuineConstDigestOffset(hb.slice(8, 12))
                 : _.GetServerGenuineConstDigestOffset(hb.slice(772, 776))
             )
         ;
-            
-        _.calcHmac(
-            Buffer.concat([
-                hb.slice(0, serverDigestOffset),
-                hb.slice(serverDigestOffset + _.SHA256DL)],
-                RTMP_SIG_SIZE - _.SHA256DL
-            ),
-            _.GenuineFMSConst
-        )
-        .copy(hb, serverDigestOffset, 0, 32);
-        return hb;
+        return (
+            _.calcHmac(
+                Buffer.concat(
+                    [
+                        hb.slice(0, sdo),
+                        hb.slice(sdo + 32)
+                    ],
+                    1504
+                ),
+                _.GenuineFMSConst
+            )
+            .copy(hb, sdo, 0, 32),
+
+            hb
+        );
     }
 )

@@ -1,35 +1,35 @@
 
-
 export default (
   (
-    out, // Buffer.alloc(this.rtmpHeaderSize[pp.fmt % 4])
-    pp
+    o, // out // Buffer.alloc(this.rtmpHeaderSize[p.fmt % 4])
+    p,
+    f, // p.fmt
+    t // p.timestamp
   ) => (
-    (pp.fmt <= 2)
+    (f <= 2)
     && (
-      out
-      .writeUIntBE(
+      o.writeUIntBE(
         (
-          pp.timestamp >= 0xffffff
+          t >= 0xffffff
           ? 0xffffff
-          : pp.timestamp
+          : t
         ),
         0,
         3
       )
     ),
 
-    (pp.fmt <= 1)
+    (f <= 1)
     &&
     (
-      out.writeUIntBE(pp.length, 3, 3),
-      out.writeUInt8(pp.type, 6)
+      o.writeUIntBE(p.length, 3, 3),
+      o.writeUInt8(p.type, 6)
     ),
     
-    (pp.fmt === 0)
+    (f === 0)
     &&
-    out.writeUInt32LE(pp.stream_id, 7),
+    o.writeUInt32LE(p.stream_id, 7),
     
-    out
+    o
   )
 )

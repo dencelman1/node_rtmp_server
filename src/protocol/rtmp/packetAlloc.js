@@ -2,18 +2,18 @@
 
 export default (
     (
-        pp,
-        l // pp.length
+        p,
+        l // p.length
     ) => (
-        (pp.capacity < l)
-        &&
-        (
-            pp.payload = (
+        (p.capacity < l)
+        ? (
+            p.payload = (
                 Buffer.alloc(
-                    pp.capacity =
+                    p.capacity =
                         l + 1024
                 )
             )
         )
+        : null
     )
 )

@@ -1,33 +1,38 @@
-
+import {randomBytes} from "crypto";
 
 export default (
     (_, mf, sg) => {
         var
-            RTMP_SIG_SIZE = _.RTMP_SIG_SIZE,
-            randomBytes = crypto.randomBytes(RTMP_SIG_SIZE - 32),
-            challengeKeyOffset = (
-                (mf === 1)
-                ? _.GetClientGenuineConstDigestOffset(sg.slice(8, 12))
-                : _.GetServerGenuineConstDigestOffset(sg.slice(772, 776))
-            )
+            rb = null,
+            cko = 0 // challengeKey_Offset
         ;
-        
         return Buffer.concat(
             [
-                randomBytes,
                 (
-                    _.calcHmac(
-                        randomBytes,
-                        (
-                            _.calcHmac(
-                                sg.slice(challengeKeyOffset, challengeKeyOffset + 32),
-                                _.GenuineFMSConstCrud
-                            )
+                    rb = (
+                        randomBytes(
+                            1504
                         )
+                    )
+                ),
+                _.calcHmac(
+                    rb,
+                    _.calcHmac(
+                        sg.slice(
+                            (
+                                cko = (
+                                    (mf === 1)
+                                    ? _.GetClientGenuineConstDigestOffset(sg.slice(8, 12))
+                                    : _.GetServerGenuineConstDigestOffset(sg.slice(772, 776))
+                                )
+                            ),
+                            ( cko + 32 )
+                        ),
+                        _.GenuineFMSConstCrud
                     )
                 )
             ],
-            RTMP_SIG_SIZE
+            1536
         );
     }
 )

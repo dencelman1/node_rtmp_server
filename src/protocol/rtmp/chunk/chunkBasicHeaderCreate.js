@@ -1,38 +1,45 @@
 
 
 export default (
-    (fmt, cid) => {
-        var out = null;
-        return (
-            (cid >= 64 + 255)
+    (
+        f, // fmt
+        i, // cid
+        o // null
+    ) => (
+        (
+            (i >= 319)
             ? (
                 (
                     (
-                        out = Buffer.alloc(3)
+                        o = Buffer.alloc(3)
                     )[0] = (
-                        (fmt << 6) | 1
+                        (f << 6) | 1
                     )
                 ),
-                (out[1] = (cid - 64) & 0xff),
-                (out[2] = ((cid - 64) >> 8) & 0xff)
+                (o[1] = (i - 64) & 0xff),
+                (o[2] = ((i - 64) >> 8) & 0xff)
             )
             :
-            (cid >= 64)
+            (i >= 64)
             ? (
                 (
                     (
-                        out = Buffer.alloc(2)
+                        o = Buffer.alloc(2)
                     )[0] = (
-                        (fmt << 6) | 0
+                        (f << 6) | 0
                     )
                 ),
-                (out[1] = (cid - 64) & 0xff)
+                (o[1] = (i - 64) & 0xff)
             )
             : (
-                (out = Buffer.alloc(1))[0] = (fmt << 6) | cid
-            ),
+                (
+                    o = Buffer.alloc(1)
+                )[0] = (
+                    (f << 6) | i
+                )
+            )
+        ),
 
-            out
-        );
-    }
+        o
+    )
 )

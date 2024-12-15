@@ -3,12 +3,12 @@
 export default (
   (str) => {
     var
-      data = Buffer.from(str, "utf8"),
-      sLen = Buffer.alloc(2)
+      d = Buffer.from(str, "utf8"),
+      l = Buffer.alloc(2)
     ;
     return (
-      sLen.writeUInt16BE(data.length, 0),
-      Buffer.concat([sLen, data])
+      l.writeUInt16BE(d.length, 0),
+      Buffer.concat([l, d])
     );
   }
 )

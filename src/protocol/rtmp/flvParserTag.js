@@ -9,9 +9,7 @@ export default (
             packetType = 0,
             fourCC = null
         ;
-
-        p.codec_type = type;
-
+        
         p.pts =
         p.dts = (
             time
@@ -19,7 +17,7 @@ export default (
         p.size = size;
         p.data = data;
 
-        if (type === 8) {
+        if ((p.codec_type = type) === 8) {
             codecID = data[0] >> 4;
             p.codec_id = codecID;
             p.flags = 1;
